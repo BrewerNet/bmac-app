@@ -7,6 +7,15 @@ const Page = () => {
       <h1>Home</h1>
       <Link href="/about">
         <a>About</a>
+        About
+      </Link>
+      <br/>
+      <Link href="/signup/signup">
+        Sign Up
+      </Link>
+      <br/>
+      <Link href="/login/login">
+        Login
       </Link>
     </div>
   );
