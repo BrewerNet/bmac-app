@@ -14,7 +14,11 @@ const SignUpPage = () => {
   const handleSubmit = async (e:any) => {
     e.preventDefault(); 
     try {
-      const response = await fetch('http://localhost:8080/api/v1/auth/sign-up', {
+      if (!process.env.NEXT_PUBLIC_SIGNUP_URL) {
+        console.error('SIGN_UP environment variable is not defined');
+        return;
+      }
+      const response = await fetch(process.env.NEXT_PUBLIC_SIGNUP_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -18,7 +18,13 @@ export default function Login() {
   const handleSubmit = async (e:any) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8080/api/v1/auth/login', {
+      if (!process.env.NEXT_PUBLIC_LOGIN_URL) {
+        console.log(process.env.NEXT_PUBLIC_LOGIN_URL);
+        console.error('LOGIN_URL environment variable is not defined');
+        return;
+      }
+      
+      const response = await fetch(process.env.NEXT_PUBLIC_LOGIN_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
