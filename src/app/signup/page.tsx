@@ -1,4 +1,7 @@
+'use client';
+
 import { useState } from "react";
+import axios from '../../utils/axios'
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -13,20 +16,15 @@ const SignUpPage = () => {
 
   const handleSubmit = async (e:any) => {
     e.preventDefault(); 
+    const signUpUrl = process.env.NEXT_PUBLIC_SIGNUP_URL;
+    if (!signUpUrl) {
+      console.error('SIGN_UP_URL environment variable is not defined');
+      return;
+    }
     try {
-      if (!process.env.NEXT_PUBLIC_SIGNUP_URL) {
-        console.error('SIGN_UP environment variable is not defined');
-        return;
-      }
-      const response = await fetch(process.env.NEXT_PUBLIC_SIGNUP_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
-      if (response.ok) {
-        console.log('Form data submitted successfully!');
+      const response = await axios.post(signUpUrl, formData);
+      if (response.status === 200) {
+        console.log('Form data submitted successfully!', response.data);
       } else {
         console.error('Failed to submit form data.');
       }
