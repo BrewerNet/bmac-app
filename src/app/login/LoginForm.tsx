@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import Router from 'next/router';
+'use client';
 
-export default function Login() {
+import { useState } from 'react';
+import axios from 'axios';
+
+export default function LoginForm() {
   const [credentials, setCredentials] = useState({
     identifier: '',
     password: ''
@@ -9,26 +11,36 @@ export default function Login() {
 
   const handleChange = (e:any) => {
     const { name, value } = e.target;
-    setCredentials(prevCre => ({
-      ...prevCre,
+    setCredentials((prev) => ({
+      ...prev,
       [name]: value
     }));
+  };
+
+  const handleGoogleLogin = async (e:any) => {
+    e.preventDefault();
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+      const googleLoginUrl = process.env.NEXT_PUBLIC_GOOGLE_LOGIN_URL;
+      if (!googleLoginUrl || !backendUrl) {
+        console.error('GOOGLE_LOGIN_URL environment variable is not defined');
+        return;
+      }
+      const fullGoogleLoginUrl = `${backendUrl}${googleLoginUrl}`;
+      window.location.href = fullGoogleLoginUrl;
+    } catch (error) {
+      console.error('Error google login:', error);
+    }
   };
 
   const handleSubmit = async (e:any) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8080/api/v1/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(credentials)
-      });
-      if (response.ok) {
-        console.log('Login successfully!');
+      const response = await axios.post('/api/login', credentials);
+      if (response.status === 200) {
+        console.log('Login successfully!', response.data);
       } else {
-        console.error('Failed to Login.');
+        console.error('Failed to login.');
       }
     } catch (error) {
       console.error('Error login:', error);
@@ -37,7 +49,6 @@ export default function Login() {
 
   return (
     <div>
-      <h1>Login</h1>
       <form onSubmit={handleSubmit}>
         <label>
           Email:
@@ -63,6 +74,7 @@ export default function Login() {
         <br />
         <button type="submit">Login</button>
       </form>
+      <button onClick={handleGoogleLogin}>Google Login</button>
     </div>
   );
 }
